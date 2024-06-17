@@ -7,27 +7,24 @@ pygame.mixer.pre_init(44100, 16, 4, 4096)  # frequency, size, channels, buffersi
 pygame.init()
 WIDTH, HEIGHT = 750, 750
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("SPACE SHOOTER")
+pygame.display.set_caption("Keep Elon Away")
 
 # LOAD SPACESHIPS
-RED_SPACESHIP = pygame.image.load(os.path.join("assets", "pixel_ship_red_small.png"))
-BLUE_SPACESHIP = pygame.image.load(os.path.join("assets", "pixel_ship_blue_small.png"))
-GREEN_SPACESHIP = pygame.image.load(os.path.join("assets", "pixel_ship_green_small.png"))
-YELLOW_SPACESHIP = pygame.image.load(os.path.join("assets", "pixel_ship_yellow.png"))
+Player_UFO = pygame.image.load(os.path.join("ufo.png"))
+Enemy_Elon = pygame.image.load(os.path.join("elon.png"))
 
 # LOAD LASERS
-RED_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_red.png"))
-BLUE_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_blue.png"))
-GREEN_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_green.png"))
-YELLOW_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_yellow.png"))
+RED_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_red.png"))
+BLUE_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_blue.png"))
+GREEN_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_green.png"))
+YELLOW_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_yellow.png"))
 
 # LOAD BACKGROUND
-BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background-black.png")), (WIDTH, HEIGHT))
+BG = pygame.transform.scale(pygame.image.load(os.path.join("map.png")), (WIDTH, HEIGHT))
 
 # LOAD SOUND EFFECTS
-explosion_sound = pygame.mixer.Sound(os.path.join("music", "explosion.wav"))
+explosion_sound = pygame.mixer.Sound(os.path.join("soundtrack.mp3"))
 laser_sound = pygame.mixer.Sound(os.path.join("music", "laser.wav"))
-
 
 # Laser Class for shooting lasers
 class Laser:
@@ -51,20 +48,20 @@ class Laser:
 
 
 # Ship Parent class to inherit player and enemy ship class
-class Ship:
+class Ufo:
     COOLDOWN = 30
 
     def __init__(self, x, y, health=100):
         self.x = x
         self.y = y
         self.health = health
-        self.ship_img = None
+        self.ufo_img = None
         self.laser_img = None
         self.lasers = []
         self.cool_down_counter = 0
 
     def draw(self, window):
-        window.blit(self.ship_img, (self.x, self.y))
+        window.blit(self.ufo_img, (self.x, self.y))
         # DRAWING LASER
         for laser in self.lasers:
             laser.draw(window)
@@ -95,19 +92,19 @@ class Ship:
             self.cool_down_counter = 1
 
     def get_width(self):
-        return self.ship_img.get_width()
+        return self.ufo_img.get_width()
 
     def get_height(self):
-        return self.ship_img.get_height()
+        return self.ufo_img.get_height()
 
 
 # Player Ship class which inherits from Ship class
-class Player(Ship):
+class Player(Ufo):
     def __init__(self, x, y, health=100):
         super().__init__(x, y, health)
-        self.ship_img = YELLOW_SPACESHIP
+        self.ufo_img = Player_UFO
         self.laser_img = YELLOW_LASER
-        self.mask = pygame.mask.from_surface(self.ship_img)
+        self.mask = pygame.mask.from_surface(self.ufo_img)
         self.max_health = health
 
     def move_lasers(self, vel, objs):
@@ -135,18 +132,16 @@ class Player(Ship):
 
 
 # Enemy ship class which inherits from ship class
-class Enemy(Ship):
+class Enemy(Ufo):
     COLOR_MAP = {
-        "red": (RED_SPACESHIP, RED_LASER),
-        "blue": (BLUE_SPACESHIP, BLUE_LASER),
-        "green": (GREEN_SPACESHIP, GREEN_LASER)
+        "elon": (Enemy_Elon, RED_LASER),
     }
 
     def __init__(self, x, y, color, health=100):
         super().__init__(x, y, health)
-        self.ship_img = self.COLOR_MAP[color][0]
+        self.ufo_img = self.COLOR_MAP[color][0]
         self.laser_img = self.COLOR_MAP[color][1]
-        self.mask = pygame.mask.from_surface(self.ship_img)
+        self.mask = pygame.mask.from_surface(self.ufo_img)
         self.max_health = health
 
     def move(self, vel):  # To move down the enemy ship
@@ -235,7 +230,7 @@ def main():
             wave_length += 5
             for _ in range(wave_length):
                 enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 * (1 + level // 4), -100),
-                              random.choice(["red", "green", "blue"]))
+                              random.choice(["elon"]))
                 enemies.append(enemy)
 
         for event in pygame.event.get():
