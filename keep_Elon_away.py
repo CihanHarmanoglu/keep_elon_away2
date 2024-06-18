@@ -12,19 +12,29 @@ pygame.display.set_caption("Keep Elon Away")
 # LOAD SPACESHIPS
 Player_UFO = pygame.image.load(os.path.join("ufo.png"))
 Enemy_Elon = pygame.image.load(os.path.join("elon.png"))
+Enemy_Elon = pygame.transform.scale(Enemy_Elon, (75, 75))
 
 # LOAD LASERS
 RED_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_red.png"))
-BLUE_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_blue.png"))
-GREEN_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_green.png"))
 YELLOW_LASER = pygame.image.load(os.path.join("laser", "pixel_laser_yellow.png"))
 
 # LOAD BACKGROUND
 BG = pygame.transform.scale(pygame.image.load(os.path.join("map.png")), (WIDTH, HEIGHT))
+MENU_BG = pygame.transform.scale(pygame.image.load(os.path.join("menubackground.png")), (WIDTH, HEIGHT))
 
 # LOAD SOUND EFFECTS
-explosion_sound = pygame.mixer.Sound(os.path.join("soundtrack.mp3"))
-laser_sound = pygame.mixer.Sound(os.path.join("music", "laser.wav"))
+explosion_sound = pygame.mixer.Sound(os.path.join("musk.mp3"))
+laser_sound = pygame.mixer.Sound(os.path.join("ufo gun.mp3"))
+
+
+# SOUNDTRACK
+pygame.mixer.music.load('soundtrack.mp3')
+
+# SOUNDTRACK LOOP
+pygame.mixer.music.play(-1)
+
+# SOUNDTRACK VOLUME
+pygame.mixer.music.set_volume(0.2)
 
 # Laser Class for shooting lasers
 class Laser:
@@ -128,7 +138,7 @@ class Player(Ufo):
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.x, self.y + self.get_height() + 10, self.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (
-        self.x, self.y + self.get_height() + 10, int(self.get_width() * (self.health / self.max_health)), 10))
+            self.x, self.y + self.get_height() + 10, int(self.get_width() * (self.health / self.max_health)), 10))
 
 
 # Enemy ship class which inherits from ship class
@@ -192,10 +202,8 @@ def main():
         WIN.blit(BG, (0, 0))
 
         # DRAW TEXT
-        level_label = main_font.render(f"Level: {level}", 1, (255, 255, 255))
-        lives_label = main_font.render(f"Lives: {lives}", 1, (255, 255, 255))
+        lives_label = main_font.render(f"Lives: {lives}", 1, (0, 0, 0))
         WIN.blit(lives_label, (10, 10))
-        WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
 
         # SHIP DRAWING
         for enemy in enemies:
@@ -205,8 +213,32 @@ def main():
 
         # IF WE LOSE
         if lost:
-            lost_label = main_font.render("YOU LOST!", 1, (255, 255, 255))
-            WIN.blit(lost_label, ((WIDTH - lost_label.get_width()) // 2, (HEIGHT - lost_label.get_height()) // 2))
+            # Define the list of names
+            names = [
+                "Osman Cihan Kahraman 78694",
+                "Emre Can Oktar 78695",
+                "Mehmet Ali Dagdemir 78700",
+                "Tatenda Glendah Musengi 78973"
+            ]
+
+            # Determine the font size and line spacing
+            font_size = 35
+            line_spacing = 5  # Adjust as needed
+
+            # Create a font object for the names
+            name_font = pygame.font.SysFont('comicsans', font_size)
+
+            # Calculate the total height needed for all names
+            total_height = (font_size + line_spacing) * len(names) - line_spacing
+
+            # Starting y-position for centering vertically
+            y = (HEIGHT - total_height) // 2
+
+            # Render and blit each name onto the screen
+            for name in names:
+                name_label = name_font.render(name, 1, (0, 0, 0))
+                WIN.blit(name_label, ((WIDTH - name_label.get_width()) // 2, y))
+                y += font_size + line_spacing
 
         # UPDATING THE DISPLAY
         pygame.display.update()
@@ -270,12 +302,12 @@ def main():
 
 
 def main_menu():
-    title_font = pygame.font.SysFont("comicsans", 75)
+    title_font = pygame.font.SysFont("comicsans", 60)
     run = True
     while run:
-        title_label = title_font.render("Press the mouse to begin...", 1, (255, 255, 255))
-        WIN.blit(BG, (0, 0))
-        WIN.blit(title_label, ((WIDTH - title_label.get_width()) // 2, (HEIGHT - title_label.get_height()) // 2))
+        title_label = title_font.render("Press the mouse to begin...", 1, (0, 0, 0))
+        WIN.blit(MENU_BG, (0, 0))  # Draw the menu background
+        WIN.blit(title_label, ((WIDTH - title_label.get_width()) // 2, (HEIGHT - title_label.get_height()) // 1.5))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
