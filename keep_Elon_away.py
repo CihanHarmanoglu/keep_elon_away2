@@ -59,7 +59,7 @@ class Laser:
 
 # Ship Parent class to inherit player and enemy ship class
 class Ufo:
-    COOLDOWN = 30
+    COOLDOWN = 100
 
     def __init__(self, x, y, health=100):
         self.x = x
